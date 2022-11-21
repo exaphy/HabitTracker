@@ -1,0 +1,45 @@
+import SwiftUI
+
+struct AddHabit: View {
+    @State private var name = ""
+    @State private var description = ""
+    let types = ["Routine", "Study", "Work", "Other"]
+    @State private var type = "Routine"
+    @Environment(\.dismiss) var done
+    @ObservedObject var items: InfoClass
+    @State private var presentAlert = false
+    
+    var body: some View {
+        NavigationView {
+            Form {
+            Section {
+            TextField("Name", text: $name)
+            TextField("Description", text: $description)
+            Picker("Select a type", selection: $type) {
+                ForEach(types, id: \.self) {
+                    Text($0)
+                }
+            }
+            .pickerStyle(.segmented)
+            }
+            }
+            
+                .navigationTitle("Add Habit")
+                .toolbar {
+                    Button("Done") {
+                        let info = InfoStructure(timesCompleted: 1, name: name, description: description, type: type)
+                        items.habits.append(info)
+                        done()
+                }
+                    .disabled(name.isEmpty || description.isEmpty)
+        }
+        .alert("Invalid Habit", isPresented: $presentAlert) {
+            Button("OK") {
+                
+            }
+        } message: {
+            Text("Please fill out all fields.")
+        }
+    }
+}
+}
