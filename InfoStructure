@@ -1,0 +1,9 @@
+import SwiftUI
+
+struct InfoStructure: Identifiable, Codable, Equatable {
+    var id = UUID()
+    var timesCompleted: Int
+    var name: String 
+    var description: String 
+    var type: String 
+}
