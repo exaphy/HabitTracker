@@ -1,0 +1,50 @@
+import SwiftUI
+
+struct ContentView: View {
+    @State private var showAdd = false
+    @StateObject var listOfHabits = InfoClass()
+    
+    var body: some View {
+        NavigationView {
+            List {
+                ForEach(listOfHabits.habits) { habits in
+                    NavigationLink {
+                        DetailView(habitItem: habits, habits: listOfHabits)
+                            .navigationTitle(habits.name)
+                    } label: {
+                    HStack {
+                        VStack {
+                        Text(habits.name)
+                                .fontWeight(.bold)
+                            Text(habits.description)
+                                .font(.caption)
+                        }
+                        Spacer()
+                        Text(habits.type)
+                            .font(.callout.bold())
+                    }
+                }
+                }
+                .onDelete(perform: delete)
+            }
+            
+            .navigationTitle("Habit Tracker")
+            .toolbar {
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    EditButton()
+                    Button {
+                        showAdd = true 
+                    } label: {
+                        Image(systemName: "plus")
+                    }
+                }
+            }
+        }
+        .sheet(isPresented: $showAdd) {
+            AddHabit(items: listOfHabits)
+        }
+    }
+    func delete(at offsets: IndexSet) {
+        listOfHabits.habits.remove(atOffsets: offsets)
+    }
+}
