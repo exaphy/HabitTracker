@@ -1,0 +1,37 @@
+import SwiftUI
+
+struct DetailView: View {
+    var habitItem: InfoStructure
+    @ObservedObject var habits: InfoClass
+    @State private var timesCompleted: Int = 0
+    
+    var body: some View {
+        List {
+            Section("Description") {
+                Text(habitItem.description)
+            }
+            Section("Type") {
+                Text(habitItem.type)
+            }
+            Section("Amount of Times Completed") {
+                if timesCompleted < 2  {
+                Text("\(habitItem.name) was completed \(timesCompleted) time") 
+                } else {
+                    Text("\(habitItem.name) was completed \(timesCompleted) times")
+                }
+                Stepper("Complete +1", value: $timesCompleted, in: 1...1000)
+            }
+            .onAppear {
+                timesCompleted = habitItem.timesCompleted
+            }
+            .onDisappear {
+                if let index = habits.habits.firstIndex(where: { $0 == habitItem }) {
+                    habits.habits.remove(at: index)
+                    var tempHabit = habitItem
+                    tempHabit.timesCompleted = timesCompleted
+                    habits.habits.insert(tempHabit, at: index)
+                }
+            }
+        }
+    }
+}
