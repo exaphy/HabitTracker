@@ -1,0 +1,21 @@
+import SwiftUI
+
+class InfoClass: ObservableObject {
+    @Published var habits = [InfoStructure]() {
+        didSet {
+        if let data = try? JSONEncoder().encode(habits) {
+            UserDefaults.standard.set(data, forKey: "listOfHabits")
+        }
+        }
+    }
+    
+    init() {
+        if let decodeData = UserDefaults.standard.data(forKey: "listOfHabits") {
+            if let list = try? JSONDecoder().decode([InfoStructure].self, from: decodeData) {
+                habits = list
+                return
+            }
+        }
+        habits = []
+    }
+} 
